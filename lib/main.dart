@@ -3,17 +3,14 @@ import 'dart:collection';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter/widgets.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import 'storageUtil.dart';
 import 'package:musicplayer/PlayQueue.dart';
 
-void main() {
-  getPermissions();
-  runApp(MyApp());
-}
-
-/*This function gets the nevessary read/write permission*/
+/*This function gets the necessary read/write permission*/
 Future<void> getPermissions() async {
   try {
     Map<PermissionGroup, PermissionStatus> permissions =
@@ -23,16 +20,20 @@ Future<void> getPermissions() async {
   }
 }
 
+void main() {
+  getPermissions();
+  runApp(MyApp());
+}
+
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Music Player',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
+        primaryColor: Colors.black,
       ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
+      home: MyHomePage(title: 'Music Player'),
     );
   }
 }
@@ -70,19 +71,35 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  Container musicFolderCard(String txt){
+  Container musicFolderCard(String txt) {
     return Container(
       child: Material(
         child: InkWell(
           child: Center(
-            child: Text(
-              txt.toString().toUpperCase(),
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 24.0,
-                fontFamily: "Raleway",
+            child: Stack(children: <Widget>[
+              Text(
+                txt.toString(),
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    fontSize: 38.0,
+                    fontWeight: FontWeight.w200,
+                    letterSpacing: 2.0,
+                  foreground: Paint()
+                    ..style = PaintingStyle.stroke
+                    ..strokeWidth = 2
+                    ..color = Colors.white.withAlpha(50),
+                  ),
               ),
-            ),
+              Text(
+                txt.toString(),
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    fontSize: 38.0,
+                    fontWeight: FontWeight.w200,
+                    letterSpacing: 2.0,
+                    color: Colors.black,
+              ),
+            ),]),
           ),
           onTap: () => {
             print("tapped " + txt.toString())
@@ -90,12 +107,15 @@ class _MyHomePageState extends State<MyHomePage> {
           },
           borderRadius: BorderRadius.all(Radius.circular(18.0)),
         ),
-        color:Colors.transparent,
+        color: Colors.transparent,
       ),
       margin: EdgeInsets.all(8.0),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.all(  Radius.circular(18.0)),
-        color: Colors.white,
+        borderRadius: BorderRadius.all(Radius.circular(18.0)),
+        gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [Color(0xffB0F3F1), Color(0xffFFCFDF)]),
         boxShadow: [
           BoxShadow(
             color: Colors.grey,
@@ -110,17 +130,46 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
-      body: Center(
-        child: GridView.count(
-            crossAxisCount: 2,
-            padding: EdgeInsets.all(8.0),
-            children: musicFolderToSongsMap.keys
-                .map((e) => musicFolderCard(e)).toList()
-            //musicFolderToSongsMap.keys.map((item) => new Text(item)).toList(),
-            ),
+      body: Container(
+        margin: EdgeInsets.only(top: 50.0),
+        padding: EdgeInsets.all(24.0),
+        child: CustomScrollView(
+          slivers: <Widget>[
+            SliverList(
+                delegate: SliverChildListDelegate([
+              Text("Folders".toUpperCase(),
+                  style: TextStyle(
+                      color: Colors.black54,
+                      fontSize: 36.0,
+                      fontFamily: "SFFlorencesans",
+                      letterSpacing: 1.0)),
+              Padding(
+                padding: EdgeInsets.only(top: 18.0),
+              ),
+            ])),
+            SliverGrid(
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2),
+                delegate: SliverChildListDelegate(musicFolderToSongsMap.keys
+                    .map((e) => musicFolderCard(e))
+                    .toList())),
+            SliverList(
+                delegate: SliverChildListDelegate([
+              Padding(
+                padding: EdgeInsets.only(top: 24.0),
+              ),
+              Text("Playlists".toUpperCase(),
+                  style: TextStyle(
+                      color: Colors.black54,
+                      fontSize: 36.0,
+                      fontFamily: "SFFlorencesans",
+                      letterSpacing: 1.0)),
+              Padding(
+                padding: EdgeInsets.only(top: 24.0),
+              ),
+            ])),
+          ],
+        ),
       ),
     );
   }
