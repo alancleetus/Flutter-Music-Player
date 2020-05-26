@@ -15,8 +15,7 @@ class PlayQueue{
 
   add(Song s) => currentPlayQueue.add(s);
   addList(List<Song> s) => currentPlayQueue.addAll(s);
-
-  playNext(Song s) {
+  addNext(Song s) {
     if(currentPlayQueue.length>1)
       currentPlayQueue.first.insertAfter(s);
     else
@@ -24,5 +23,9 @@ class PlayQueue{
   }
 
   Song getNextSong() => currentPlayQueue.first;
+
+  play(){}
+  pause(){}
+  stop(){}
 
 }
