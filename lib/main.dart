@@ -5,8 +5,12 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
+import 'package:musicplayer/Song.dart';
 import 'package:permission_handler/permission_handler.dart';
-
+/*
+import 'package:audioplayers/audio_cache.dart';
+import 'package:audioplayers/audioplayers.dart';
+*/
 import 'storageUtil.dart';
 import 'package:musicplayer/PlayQueue.dart';
 
@@ -81,29 +85,37 @@ class _MyHomePageState extends State<MyHomePage> {
                 txt.toString(),
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                    fontSize: 38.0,
-                    fontWeight: FontWeight.w200,
-                    letterSpacing: 2.0,
+                  fontSize: 38.0,
+                  fontWeight: FontWeight.w200,
+                  letterSpacing: 2.0,
                   foreground: Paint()
                     ..style = PaintingStyle.stroke
                     ..strokeWidth = 2
                     ..color = Colors.white.withAlpha(50),
-                  ),
+                ),
               ),
               Text(
                 txt.toString(),
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                    fontSize: 38.0,
-                    fontWeight: FontWeight.w200,
-                    letterSpacing: 2.0,
-                    color: Colors.black,
+                  fontSize: 38.0,
+                  fontWeight: FontWeight.w200,
+                  letterSpacing: 2.0,
+                  color: Colors.black,
+                ),
               ),
-            ),]),
+            ]),
           ),
-          onTap: () => {
-            print("tapped " + txt.toString())
-            //todo: open page with list of songs in folder
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => SecondRoute(
+                        folderName: txt,
+                        songsList: musicFolderToSongsMap[txt],
+                      )),
+            );
+            print("Tapped folder: " + txt);
           },
           borderRadius: BorderRadius.all(Radius.circular(18.0)),
         ),
@@ -171,6 +183,54 @@ class _MyHomePageState extends State<MyHomePage> {
           ],
         ),
       ),
+    );
+  }
+}
+/*
+Future<Song> generateSong(URI) async {
+  AudioPlayer audioPlayer = AudioPlayer();
+
+  String title = "";
+  await audioPlayer.;
+  String tags = "";
+
+  return Song(title, URI, duration, tags)
+}*/
+
+class SecondRoute extends StatelessWidget {
+  SecondRoute({Key key, this.folderName, this.songsList}) : super(key: key);
+  final String folderName;
+  final List<FileSystemEntity> songsList;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: CustomScrollView(slivers: <Widget>[
+        SliverList(
+            delegate: SliverChildListDelegate([
+          Padding(
+            padding: EdgeInsets.only(top: 50.0),
+          ),
+          Row(
+            children: <Widget>[
+              RaisedButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: IconButton(
+                  icon: Icon(Icons.arrow_back),
+                  tooltip: 'Back',
+                ),
+              ),
+              Text(folderName),
+            ],
+          ),
+        ])),
+        SliverList(
+          delegate: SliverChildListDelegate(
+              songsList.map((e) => Text(e.path)).toList()),
+        )
+      ]),
     );
   }
 }
