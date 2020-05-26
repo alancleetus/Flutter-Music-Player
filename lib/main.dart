@@ -8,12 +8,16 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:musicplayer/Song.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:async/async.dart';
 /*
 import 'package:audioplayers/audio_cache.dart';
 import 'package:audioplayers/audioplayers.dart';
 */
 import 'storageUtil.dart';
 import 'package:musicplayer/PlayQueue.dart';
+
+IsPlaying isPlayingService = IsPlaying();
+CurrentSong currentSongService = CurrentSong();
 
 /*This function gets the necessary read/write permission*/
 Future<void> getPermissions() async {
@@ -269,6 +273,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                           print("Playing " +
                                               e.toString().toUpperCase() +
                                               " folder");
+
                                           final scaff = Scaffold.of(context);
                                           scaff.showSnackBar(SnackBar(
                                             content: Text("Playing " +
@@ -292,10 +297,9 @@ class _MyHomePageState extends State<MyHomePage> {
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) => SongsListPage(
-                                              songsListName: e,
-                                              songsList:
-                                                  musicFolderToSongsMap[e],
-                                            )),
+                                            songsListName: e,
+                                            songsList:
+                                                musicFolderToSongsMap[e])),
                                   );
                                 },
                                 padding: EdgeInsets.all(18.0),
@@ -370,16 +374,24 @@ class SongsListPage extends StatelessWidget {
               delegate: SliverChildListDelegate(songsList
                   .map((e) => Card(
                         margin: EdgeInsets.all(8.0),
-                        child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: <Widget>[
-                              ListTile(
+                        child:
+                            Column(mainAxisSize: MainAxisSize.min, children: <
+                                Widget>[
+                          StreamBuilder(
+                            stream: isPlayingService.stream$,
+                            builder: (BuildContext context,
+                                    AsyncSnapshot isPlayingSnap) =>
+                                StreamBuilder(
+                              stream: currentSongService.stream$,
+                              builder: (BuildContext context,
+                                      AsyncSnapshot currentSongSnap) =>
+                                  ListTile(
                                 contentPadding: EdgeInsets.all(8.0),
                                 leading: IconButton(
                                   icon: Icon(
-                                    (playQueue.isPlaying &&
-                                            playQueue
-                                                .isPlayingSong(Song(e.path)))
+                                    (isPlayingSnap.data &&
+                                            currentSongSnap.data ==
+                                                Song(e.path))
                                         ? Icons.pause
                                         : Icons.play_arrow,
                                     size: 40.0,
@@ -387,8 +399,19 @@ class SongsListPage extends StatelessWidget {
                                   ),
                                   onPressed: () {
                                     Song s = Song(e.path);
-                                    playQueue.addFirst(s);
-                                    playQueue.togglePlayPause();
+                                    if (isPlayingSnap.data &&
+                                        currentSongSnap.data == s) {
+                                      playQueue.pause();
+                                      isPlayingService.set(false);
+                                      print("Pausing song: " + s.toString());
+                                    } else {
+                                      playQueue.addFirst(s);
+                                      playQueue.play();
+                                      isPlayingService.set(true);
+                                      currentSongService
+                                          .set(playQueue.getCurrSong());
+                                      print("Playing song: " + s.toString());
+                                    }
                                   },
                                 ),
                                 title: Text(e
@@ -399,46 +422,47 @@ class SongsListPage extends StatelessWidget {
                                     .trim()),
                                 subtitle: Text('00 : 00'),
                               ),
-                              ButtonBar(
-                                children: <Widget>[
-                                  IconButton(
-                                    icon: Icon(Icons.playlist_add),
-                                    onPressed: () {},
-                                  ),
-                                  IconButton(
-                                    icon: Icon(Icons.favorite_border),
-                                    onPressed: () {
-                                      print("Adding " +
-                                          e
-                                              .toString()
-                                              .substring(
-                                                  0, e.toString().length - 1)
-                                              .split("/")
-                                              .last
-                                              .trim() +
-                                          " to Favorites");
-                                      final scaff = Scaffold.of(context);
-                                      scaff.showSnackBar(SnackBar(
-                                        content: Text("Adding " +
-                                            e
-                                                .toString()
-                                                .substring(
-                                                    0, e.toString().length - 1)
-                                                .split("/")
-                                                .last
-                                                .trim() +
-                                            " to Favorites"),
-                                        duration: Duration(seconds: 1),
-                                        action: SnackBarAction(
-                                          label: 'CLOSE',
-                                          onPressed: scaff.hideCurrentSnackBar,
-                                        ),
-                                      ));
-                                    },
-                                  ),
-                                ],
-                              )
-                            ]),
+                            ),
+                          ),
+                          ButtonBar(
+                            children: <Widget>[
+                              IconButton(
+                                icon: Icon(Icons.playlist_add),
+                                onPressed: () {},
+                              ),
+                              IconButton(
+                                icon: Icon(Icons.favorite_border),
+                                onPressed: () {
+                                  print("Adding " +
+                                      e
+                                          .toString()
+                                          .substring(0, e.toString().length - 1)
+                                          .split("/")
+                                          .last
+                                          .trim() +
+                                      " to Favorites");
+                                  final scaff = Scaffold.of(context);
+                                  scaff.showSnackBar(SnackBar(
+                                    content: Text("Adding " +
+                                        e
+                                            .toString()
+                                            .substring(
+                                                0, e.toString().length - 1)
+                                            .split("/")
+                                            .last
+                                            .trim() +
+                                        " to Favorites"),
+                                    duration: Duration(seconds: 1),
+                                    action: SnackBarAction(
+                                      label: 'CLOSE',
+                                      onPressed: scaff.hideCurrentSnackBar,
+                                    ),
+                                  ));
+                                },
+                              ),
+                            ],
+                          )
+                        ]),
                       ))
                   .toList()),
             )

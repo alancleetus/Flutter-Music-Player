@@ -1,13 +1,46 @@
 import 'dart:collection';
 
 import 'package:audioplayers/audioplayers.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:musicplayer/Song.dart';
 
+import 'package:rxdart/rxdart.dart';
+
+class IsPlaying {
+
+  BehaviorSubject _isPlaying = BehaviorSubject.seeded(false);
+
+  Stream get stream$ => _isPlaying.stream;
+  bool get current => _isPlaying.value;
+
+  set(bool b) {
+    _isPlaying.add(b);
+  }
+
+  toggle() {
+    _isPlaying.add(!current);
+  }
+
+}
+
+class CurrentSong {
+  BehaviorSubject _currentSong = BehaviorSubject.seeded(null);
+
+  Stream get stream$ => _currentSong.stream;
+  Song get current => _currentSong.value;
+
+  void set(Song s) {
+    _currentSong.add(s);
+  }
+
+  void clear() {
+    _currentSong.add(null);
+  }
+}
+
 /*This is the current list of songs being played*/
-class PlayQueue{
-  bool isPlaying = false;
+class PlayQueue {
   LinkedList<Song> currentPlayQueue = LinkedList<Song>();
-  Song currentSong;
   AudioPlayer audioPlayer = new AudioPlayer();
 
   static final PlayQueue _singleton = PlayQueue._internal();
@@ -21,35 +54,23 @@ class PlayQueue{
   addFirst(Song s) => currentPlayQueue.addFirst(s);
   addList(List<Song> s) => currentPlayQueue.addAll(s);
   addNext(Song s) {
-    if(currentPlayQueue.length>1)
+    if (currentPlayQueue.length > 1)
       currentPlayQueue.first.insertAfter(s);
     else
       currentPlayQueue.addFirst(s);
   }
 
-  Song getNextSong() => currentPlayQueue.first;
+  Song getCurrSong() => currentPlayQueue.first;
 
-  play(){
-    if(currentPlayQueue.length>0) {
-      currentSong = getNextSong();
-      audioPlayer.play(getNextSong().url);
-      isPlaying = true;
-    }
-  }
-  pause(){
-    if(isPlaying)
-      audioPlayer.pause();
-      isPlaying = false;
-  }
-  stop(){currentPlayQueue = null;}
-
-  togglePlayPause(){
-    if(currentSong == currentPlayQueue.first)
-      (isPlaying) ? pause(): play();
-    else
-      play();
+  play() {
+    audioPlayer.play(getCurrSong().url);
   }
 
-  bool isPlayingSong(s) => (s==currentSong);
+  pause() {
+    audioPlayer.pause();
+  }
 
+  stop() {
+    currentPlayQueue = null;
+  }
 }
