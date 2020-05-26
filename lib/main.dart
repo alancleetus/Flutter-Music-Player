@@ -25,6 +25,7 @@ Future<void> getPermissions() async {
   }
 }
 
+PlayQueue playQueue = PlayQueue();
 void main() {
   getPermissions();
   runApp(MyApp());
@@ -111,8 +112,8 @@ class _MyHomePageState extends State<MyHomePage> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => SecondRoute(
-                        folderName: txt,
+                  builder: (context) => SongsListPage(
+                        songsListName: txt,
                         songsList: musicFolderToSongsMap[txt],
                       )),
             );
@@ -143,219 +144,306 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: Container(
-          padding: EdgeInsets.all(24.0),
-          child: CustomScrollView(
-            slivers: <Widget>[
-              SliverList(
-                  delegate: SliverChildListDelegate([
-                Text("Folders".toUpperCase(),
-                    style: TextStyle(
-                      fontSize: 36.0,
-                      fontFamily: "SFFlorencesans",
-                      letterSpacing: 1.0,
-                      foreground: Paint()
-                        ..shader = LinearGradient(
-                          colors: <Color>[Color(0xffA88BEB), Color(0xff7F53AC)],
-                        ).createShader(Rect.fromLTWH(0.0, 0.0, 200.0, 70.0)),
-                    )),
-                Padding(
-                  padding: EdgeInsets.only(top: 18.0),
-                ),
-              ])),
-              /*SliverGrid(
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2),
-                  delegate: SliverChildListDelegate(musicFolderToSongsMap.keys
-                      .map((e) => musicFolderCard(e))
-                      .toList())),
-              SliverList(
-                  delegate: SliverChildListDelegate([
-                Padding(
-                  padding: EdgeInsets.only(top: 24.0),
-                ),
-                Text("Playlists".toUpperCase(),
-                    style: TextStyle(
-                        color: Colors.black54,
+      body: Builder(
+        builder: (context) => SafeArea(
+          child: Container(
+            padding: EdgeInsets.all(24.0),
+            child: CustomScrollView(
+              slivers: <Widget>[
+                SliverList(
+                    delegate: SliverChildListDelegate([
+                  Text("Folders".toUpperCase(),
+                      style: TextStyle(
                         fontSize: 36.0,
                         fontFamily: "SFFlorencesans",
-                        letterSpacing: 1.0)),
-                Padding(
-                  padding: EdgeInsets.only(top: 24.0),
-                ),
-
-              ])),*/
-              SliverList(
-                  delegate: SliverChildListDelegate(musicFolderToSongsMap.keys
-                      .map((e) => Container(
-                            margin: EdgeInsets.all(8.0),
-                            child: RaisedButton(
-                              child: Row(
-                                children: <Widget>[
-                                  Text(
-                                    e,
-                                    style: TextStyle(
-                                      fontSize: 24.0,
-                                      fontWeight: FontWeight.w300,
+                        letterSpacing: 1.0,
+                        foreground: Paint()
+                          ..shader = LinearGradient(
+                            colors: <Color>[
+                              Color(0xffA88BEB),
+                              Color(0xff7F53AC)
+                            ],
+                          ).createShader(Rect.fromLTWH(0.0, 0.0, 200.0, 70.0)),
+                      )),
+                  Padding(
+                    padding: EdgeInsets.only(top: 18.0),
+                  ),
+                ])),
+                SliverList(
+                    delegate: SliverChildListDelegate(musicFolderToSongsMap.keys
+                        .map((e) => Container(
+                              margin: EdgeInsets.all(8.0),
+                              child: RaisedButton(
+                                child: Row(
+                                  children: <Widget>[
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: <Widget>[
+                                        Text(
+                                          e,
+                                          style: TextStyle(
+                                            fontSize: 24.0,
+                                            fontWeight: FontWeight.w300,
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.only(top: 5.0),
+                                        ),
+                                        Row(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: <Widget>[
+                                            Icon(
+                                              Icons.music_note,
+                                              size: 15.0,
+                                              color: Colors.grey,
+                                            ),
+                                            Padding(
+                                              padding:
+                                                  EdgeInsets.only(left: 5.0),
+                                            ),
+                                            Text(
+                                              musicFolderToSongsMap[e]
+                                                  .length
+                                                  .toString(),
+                                              style: TextStyle(
+                                                fontSize: 12.0,
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            ),
+                                            Text(
+                                              (musicFolderToSongsMap[e].length >
+                                                      1)
+                                                  ? " songs"
+                                                  : " song",
+                                              style: TextStyle(
+                                                fontSize: 12.0,
+                                                fontWeight: FontWeight.w300,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
                                     ),
-                                  ),
-                                  Spacer(
-                                    flex: 2,
-                                  ),
-                                  SizedBox(
-                                    width: 50.0,
-                                    height: 50.0,
-                                    child: IconButton(
-                                      padding: EdgeInsets.all(0.0),
-                                      color: Colors.black,
-                                      icon: Icon(Icons.shuffle, size: 30.0),
-                                      onPressed: () {
-                                        print("Shuffle " + e.toString());
-                                      },
+                                    Spacer(
+                                      flex: 2,
                                     ),
-                                  ),
-                                  SizedBox(
-                                    width: 50.0,
-                                    height: 50.0,
-                                    child: IconButton(
-                                      padding: EdgeInsets.all(0.0),
-                                      color: Colors.black,
-                                      icon:
-                                          Icon(Icons.playlist_play, size: 40.0),
-                                      onPressed: () {
-                                        print("Play " + e.toString());
-                                      },
+                                    SizedBox(
+                                      width: 50.0,
+                                      height: 50.0,
+                                      child: IconButton(
+                                        padding: EdgeInsets.all(0.0),
+                                        color: Colors.black,
+                                        icon: Icon(Icons.shuffle, size: 30.0),
+                                        onPressed: () {
+                                          print("Shuffling " +
+                                              e.toString().toUpperCase() +
+                                              " folder");
+                                          final scaff = Scaffold.of(context);
+                                          scaff.showSnackBar(SnackBar(
+                                            content: Text("Shuffling " +
+                                                e.toString().toUpperCase() +
+                                                " folder"),
+                                            duration: Duration(seconds: 1),
+                                            action: SnackBarAction(
+                                              label: 'CLOSE',
+                                              onPressed:
+                                                  scaff.hideCurrentSnackBar,
+                                            ),
+                                          ));
+                                        },
+                                      ),
                                     ),
-                                  ),
-                                ],
+                                    SizedBox(
+                                      width: 50.0,
+                                      height: 50.0,
+                                      child: IconButton(
+                                        padding: EdgeInsets.all(0.0),
+                                        color: Colors.black,
+                                        icon: Icon(Icons.playlist_play,
+                                            size: 40.0),
+                                        onPressed: () {
+                                          print("Playing " +
+                                              e.toString().toUpperCase() +
+                                              " folder");
+                                          final scaff = Scaffold.of(context);
+                                          scaff.showSnackBar(SnackBar(
+                                            content: Text("Playing " +
+                                                e.toString().toUpperCase() +
+                                                " folder"),
+                                            duration: Duration(seconds: 1),
+                                            action: SnackBarAction(
+                                              label: 'CLOSE',
+                                              onPressed:
+                                                  scaff.hideCurrentSnackBar,
+                                            ),
+                                          ));
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                onPressed: () {
+                                  print("Pressed " + e.toString());
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => SongsListPage(
+                                              songsListName: e,
+                                              songsList:
+                                                  musicFolderToSongsMap[e],
+                                            )),
+                                  );
+                                },
+                                padding: EdgeInsets.all(18.0),
+                                color: Colors.white,
                               ),
-                              onPressed: () {
-                                print("Pressed " + e.toString());
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => SecondRoute(
-                                            folderName: e,
-                                            songsList: musicFolderToSongsMap[e],
-                                          )),
-                                );
-                              },
-                              padding: EdgeInsets.all(18.0),
-                              color: Colors.white,
-                            ),
-                          ))
-                      .toList())),
-            ],
+                            ))
+                        .toList())),
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 }
-/*
-Future<Song> generateSong(URI) async {
-  AudioPlayer audioPlayer = AudioPlayer();
 
-  String title = "";
-  await audioPlayer.;
-  String tags = "";
-
-  return Song(title, URI, duration, tags)
-}*/
-
-class SecondRoute extends StatelessWidget {
-  SecondRoute({Key key, this.folderName, this.songsList}) : super(key: key);
-  final String folderName;
+class SongsListPage extends StatelessWidget {
+  SongsListPage({Key key, this.songsListName, this.songsList})
+      : super(key: key);
+  final String songsListName;
   final List<FileSystemEntity> songsList;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: CustomScrollView(slivers: <Widget>[
-          SliverList(
-              delegate: SliverChildListDelegate([
-            Padding(padding: EdgeInsets.only(top: 24.0)),
-            Row(
-              children: <Widget>[
-                SizedBox(
-                  width: 50.0,
-                  height: 50.0,
-                  child: IconButton(
-                    icon: Icon(
-                      Icons.arrow_back,
-                      size: 30.0,
+      body: Builder(
+        builder: (context) => SafeArea(
+          child: CustomScrollView(slivers: <Widget>[
+            SliverList(
+                delegate: SliverChildListDelegate([
+              Padding(padding: EdgeInsets.only(top: 24.0)),
+              Row(
+                children: <Widget>[
+                  SizedBox(
+                    width: 50.0,
+                    height: 50.0,
+                    child: IconButton(
+                      icon: Icon(
+                        Icons.arrow_back,
+                        size: 30.0,
+                      ),
+                      tooltip: 'Back',
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
                     ),
-                    tooltip: 'Back',
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
                   ),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(
-                    left: 24.0,
+                  Padding(
+                    padding: EdgeInsets.only(
+                      left: 24.0,
+                    ),
                   ),
-                ),
-                Text(
-                  folderName,
-                  style: TextStyle(
-                    fontSize: 36.0,
-                    fontWeight: FontWeight.w300,
-                  ),
-                ),
-                Spacer(flex: 2),
-              ],
-            ),
-            Padding(padding: EdgeInsets.only(top: 24.0)),
-          ])),
-          SliverList(
-            delegate: SliverChildListDelegate(songsList
-                .map((e) => Card(
-                      margin: EdgeInsets.all(8.0),
-                      child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: <Widget>[
-                            ListTile(
-                              contentPadding: EdgeInsets.all(8.0),
-                              leading: IconButton(
-                                icon: Icon(
-                                  Icons.play_arrow,
-                                  size: 40.0,
-                                  color: Colors.black,
+                  Text(songsListName,
+                      style: TextStyle(
+                        fontSize: 36.0,
+                        fontFamily: "SFFlorencesans",
+                        letterSpacing: 1.0,
+                        foreground: Paint()
+                          ..shader = LinearGradient(
+                            colors: <Color>[
+                              Color(0xffABE9CD),
+                              Color(0xaa3EADCF)
+                            ],
+                          ).createShader(Rect.fromLTWH(0.0, 0.0, 200.0, 70.0)),
+                      )),
+                  Spacer(flex: 2),
+                ],
+              ),
+              Padding(padding: EdgeInsets.only(top: 24.0)),
+            ])),
+            SliverList(
+              delegate: SliverChildListDelegate(songsList
+                  .map((e) => Card(
+                        margin: EdgeInsets.all(8.0),
+                        child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              ListTile(
+                                contentPadding: EdgeInsets.all(8.0),
+                                leading: IconButton(
+                                  icon: Icon(
+                                    (playQueue.isPlaying &&
+                                            playQueue
+                                                .isPlayingSong(Song(e.path)))
+                                        ? Icons.pause
+                                        : Icons.play_arrow,
+                                    size: 40.0,
+                                    color: Colors.black,
+                                  ),
+                                  onPressed: () {
+                                    Song s = Song(e.path);
+                                    playQueue.addFirst(s);
+                                    playQueue.togglePlayPause();
+                                  },
                                 ),
-                                onPressed: (){
-                                  AudioPlayer ap = new AudioPlayer();
-                                  ap.play(e.path,isLocal: false);
-                                },
+                                title: Text(e
+                                    .toString()
+                                    .substring(0, e.toString().length - 1)
+                                    .split("/")
+                                    .last
+                                    .trim()),
+                                subtitle: Text('00 : 00'),
                               ),
-                              title: Text(e
-                                  .toString()
-                                  .substring(0, e.toString().length - 1)
-                                  .split("/")
-                                  .last
-                                  .trim()),
-                              subtitle: Text('00 : 00'),
-                            ),
-                            ButtonBar(
-                              children: <Widget>[
-                                IconButton(
-                                  icon:Icon(Icons.playlist_add),
-                                  onPressed:(){},
-                                ),
-                                IconButton(
-                                  icon:Icon(Icons.favorite_border),
-                                  onPressed:(){},
-                                ),
-
-                              ],
-                            )
-                          ]),
-                    ))
-                .toList()),
-          )
-        ]),
+                              ButtonBar(
+                                children: <Widget>[
+                                  IconButton(
+                                    icon: Icon(Icons.playlist_add),
+                                    onPressed: () {},
+                                  ),
+                                  IconButton(
+                                    icon: Icon(Icons.favorite_border),
+                                    onPressed: () {
+                                      print("Adding " +
+                                          e
+                                              .toString()
+                                              .substring(
+                                                  0, e.toString().length - 1)
+                                              .split("/")
+                                              .last
+                                              .trim() +
+                                          " to Favorites");
+                                      final scaff = Scaffold.of(context);
+                                      scaff.showSnackBar(SnackBar(
+                                        content: Text("Adding " +
+                                            e
+                                                .toString()
+                                                .substring(
+                                                    0, e.toString().length - 1)
+                                                .split("/")
+                                                .last
+                                                .trim() +
+                                            " to Favorites"),
+                                        duration: Duration(seconds: 1),
+                                        action: SnackBarAction(
+                                          label: 'CLOSE',
+                                          onPressed: scaff.hideCurrentSnackBar,
+                                        ),
+                                      ));
+                                    },
+                                  ),
+                                ],
+                              )
+                            ]),
+                      ))
+                  .toList()),
+            )
+          ]),
+        ),
       ),
     );
   }

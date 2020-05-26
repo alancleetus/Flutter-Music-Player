@@ -19,4 +19,10 @@ class Song extends LinkedListEntry<Song>{
   }
   //todo: add widget code
   Widget getCard() { return Text(title);}
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+          other is Song &&
+              url == other.url;
 }
