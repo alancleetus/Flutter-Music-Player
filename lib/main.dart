@@ -328,48 +328,101 @@ class SongsListPage extends StatelessWidget {
       body: Builder(
         builder: (context) => SafeArea(
           child: CustomScrollView(slivers: <Widget>[
-            SliverList(
-                delegate: SliverChildListDelegate([
-              Padding(padding: EdgeInsets.only(top: 24.0)),
-              Row(
+            SliverAppBar(
+              title: Text(songsListName.toUpperCase(),
+                  style: TextStyle(
+                      fontSize: 36.0,
+                      fontFamily: "SFFlorencesans",
+                      letterSpacing: 1.0,
+                    foreground: Paint()
+                      ..shader = LinearGradient(
+                        colors: <Color>[
+                          Color(0xffABE9CD),
+                          Color(0xff3EADCF)
+                        ],
+                      ).createShader(Rect.fromLTWH(0.0, 0.0, 200.0, 70.0)),
+                    /*color: Colors.white,*/
+                      shadows: [
+                        Shadow(
+                            // bottomLeft
+                            offset: Offset(-0.5, -0.5),
+                            color: Colors.grey),
+                        Shadow(
+                            // bottomRight
+                            offset: Offset(0.5, -0.5),
+                            color: Colors.grey),
+                        Shadow(
+                            // topRight
+                            offset: Offset(0.5, 0.5),
+                            color: Colors.grey),
+                        Shadow(
+                            // topLeft
+                            offset: Offset(-0.5, 0.5),
+                            color: Colors.grey),
+                      ],
+                  )
+              ),
+              centerTitle: true,
+              iconTheme: IconThemeData(color: Colors.white),
+              expandedHeight: 200.0,
+              backgroundColor: Colors.blueGrey,
+              pinned: true,
+              flexibleSpace: Stack(
                 children: <Widget>[
-                  SizedBox(
-                    width: 50.0,
-                    height: 50.0,
-                    child: IconButton(
-                      icon: Icon(
-                        Icons.arrow_back,
-                        size: 30.0,
-                      ),
-                      tooltip: 'Back',
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
+                  Positioned(
+                      child: ColorFiltered(
+                    colorFilter: ColorFilter.mode(Colors.blue, BlendMode.hue),
+                    child: Image.asset(
+                      'assets/albums.jpg',
+                      width: MediaQuery.of(context).size.width,
+                      fit: BoxFit.cover,
                     ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(
-                      left: 24.0,
-                    ),
-                  ),
-                  Text(songsListName,
-                      style: TextStyle(
-                        fontSize: 36.0,
-                        fontFamily: "SFFlorencesans",
-                        letterSpacing: 1.0,
-                        foreground: Paint()
-                          ..shader = LinearGradient(
-                            colors: <Color>[
-                              Color(0xffABE9CD),
-                              Color(0xaa3EADCF)
-                            ],
-                          ).createShader(Rect.fromLTWH(0.0, 0.0, 200.0, 70.0)),
-                      )),
-                  Spacer(flex: 2),
+                  )),
                 ],
               ),
-              Padding(padding: EdgeInsets.only(top: 24.0)),
-            ])),
+            ),
+            /*SliverList(
+                  delegate: SliverChildListDelegate([
+                Padding(padding: EdgeInsets.only(top: 24.0)),
+                Row(
+                  children: <Widget>[
+                    SizedBox(
+                      width: 50.0,
+                      height: 50.0,
+                      child: IconButton(
+                        icon: Icon(
+                          Icons.arrow_back,
+                          size: 30.0,
+                        ),
+                        tooltip: 'Back',
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(
+                        left: 24.0,
+                      ),
+                    ),
+                    Text(songsListName,
+                        style: TextStyle(
+                          fontSize: 36.0,
+                          fontFamily: "SFFlorencesans",
+                          letterSpacing: 1.0,
+                          foreground: Paint()
+                            ..shader = LinearGradient(
+                              colors: <Color>[
+                                Color(0xffABE9CD),
+                                Color(0xaa3EADCF)
+                              ],
+                            ).createShader(Rect.fromLTWH(0.0, 0.0, 200.0, 70.0)),
+                        )),
+                    Spacer(flex: 2),
+                  ],
+                ),
+                Padding(padding: EdgeInsets.only(top: 24.0)),
+              ])),*/
             SliverList(
               delegate: SliverChildListDelegate(songsList
                   .map((e) => Card(
@@ -389,9 +442,8 @@ class SongsListPage extends StatelessWidget {
                                 contentPadding: EdgeInsets.all(8.0),
                                 leading: IconButton(
                                   icon: Icon(
-                                    (isPlayingSnap.data &&
-                                            currentSongSnap.data ==
-                                                Song(e.path))
+                                    (currentSongSnap.data == Song(e.path) &&
+                                            isPlayingSnap.data)
                                         ? Icons.pause
                                         : Icons.play_arrow,
                                     size: 40.0,
