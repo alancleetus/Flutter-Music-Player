@@ -13,7 +13,7 @@ class Song extends LinkedListEntry<Song>{
 
   Song(String Url){
     this.url = Url;
-    this.title = Url.substring(0,Url.length-1).split("/").last.trim();
+    this.title = Url.split("/").last.split(".").first.trim();
     //this.duration = ap.getDuration();
     //todo: get duration using flute_music_player plugin
   }

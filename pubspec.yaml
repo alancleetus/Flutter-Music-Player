@@ -69,7 +69,8 @@ flutter:
     - family: SFFlorencesans
       fonts:
         - asset: fonts/SFFlorencesansBlack.ttf
-  #         style: italic
+        - asset: fonts/SFFlorencesans-Bold.ttf
+          weight: 700
   #   - family: Trajan Pro
   #     fonts:
   #       - asset: fonts/TrajanPro.ttf

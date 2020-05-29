@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'Song.dart';
 
 /*This function gets the name of all files and directories in the /Music folder*/
 List<FileSystemEntity> getAllMusicDirs() {
@@ -11,9 +12,10 @@ List<FileSystemEntity> getAllMusicDirs() {
   return fsList.where((entity) => entity is Directory).toList();
 }
 
-List<FileSystemEntity> getAllSongsInDirectory(String dirPath) {
-  List<FileSystemEntity> mp3List =
+List<Song> getAllSongsInDirectory(String dirPath) {
+  List<FileSystemEntity> fileList =
   Directory(dirPath).listSync(recursive: true, followLinks: false);
   //print("Songs in "+dirPath+": "+mp3List.where((mp3)=> mp3.path.toString().endsWith(".mp3")).toList().toString());
-  return mp3List.where((mp3) => mp3.path.toString().endsWith(".mp3")).toList();
+  List<FileSystemEntity> mp3PathList = fileList.where((file) => file.path.toString().endsWith(".mp3")).toList();
+  return mp3PathList.map((e)=>new Song(e.path)).toList();
 }
