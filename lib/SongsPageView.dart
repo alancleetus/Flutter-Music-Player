@@ -27,82 +27,88 @@ class SongsListPage extends StatelessWidget {
         borderRadius: BorderRadius.all(Radius.circular(10.0)),
       ),
       child: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
-     Container(
-       padding: EdgeInsets.only(left:8.0, right: 10.0, top: 5.0),
-       child: StreamBuilder(
-              stream: isPlayingService.stream$,
-              builder: (BuildContext context, AsyncSnapshot isPlayingSnap) =>
-                  StreamBuilder(
-                stream: currentSongService.stream$,
-                builder: (BuildContext context, AsyncSnapshot currentSongSnap) =>
-                    Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    GestureDetector(
-                      child: Container(
-                          child: Container(
-                        child:
-                            (currentSongSnap.data == song && isPlayingSnap.data)
-                                ? Icon(
-                                    Icons.pause,
-                                    size: 40.0,
-                                    color: myColors["grey_light"],
-                                  )
-                                : Text(
-                                    songCount,
-                                    style: TextStyle(
-                                      color: myColors["grey_light"],
-                                    ),
-                                  ),
-                        height: 50.0,
-                        width: 50.0,
-                        alignment: Alignment.center,
-                        padding: EdgeInsets.all(5.0),
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: myColors["primary_dark"],
-                        ),
-                      )),
-                      onTap: () {
-                        Song s = song;
-                        if (isPlayingSnap.data && currentSongSnap.data == s) {
-                          playQueue.pause();
-                          isPlayingService.set(false);
-                          print("Pausing song: " + s.toString());
-                        } else {
-                          playQueue.addFirst(s);
-                          playQueue.play();
-                          isPlayingService.set(true);
-                          currentSongService.set(playQueue.getCurrSong());
-                          print("Playing song: " + s.toString());
-                        }
-                      },
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(left: 24.0),
-                    ),
-                    Expanded(
-                      child: Text(
-                        song.title,
-                        style: TextStyle(
-                          color: myColors["text"],
-                          fontSize: 16.0,
-                        ),
+        Container(
+          padding: EdgeInsets.only(left: 8.0, right: 10.0, top: 5.0),
+          child: StreamBuilder(
+            stream: isPlayingService.stream$,
+            builder: (BuildContext context, AsyncSnapshot isPlayingSnap) =>
+                StreamBuilder(
+              stream: currentSongService.stream$,
+              builder: (BuildContext context, AsyncSnapshot currentSongSnap) =>
+                  Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  GestureDetector(
+                    child: Container(
+                        child: Container(
+                      child: (currentSongSnap.data == song)
+                          ? (isPlayingSnap.data)
+                              ? Icon(
+                                  Icons.play_arrow,
+                                  size: 40.0,
+                                  color: myColors["grey_light"],
+                                )
+                              : Icon(
+                                  Icons.pause,
+                                  size: 40.0,
+                                  color: myColors["grey_light"],
+                                )
+                          : Text(
+                              songCount,
+                              style: TextStyle(
+                                color: myColors["grey_light"],
+                              ),
+                            ),
+                      height: 50.0,
+                      width: 50.0,
+                      alignment: Alignment.center,
+                      padding: EdgeInsets.all(5.0),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: myColors["primary_dark"],
+                      ),
+                    )),
+                    onTap: () {
+                      Song s = song;
+                      if (isPlayingSnap.data) {
+                        playQueue.pause();
+                        isPlayingService.set(false);
+                        print("Pausing song: " + s.title);
+                      }
+
+                      if(currentSongSnap.data != s) {
+                        playQueue.addFirst(s);
+                        playQueue.play();
+                        isPlayingService.set(true);
+                        currentSongService.set(playQueue.getCurrSong());
+                        print("Playing song: " + s.title);
+                      }
+                    },
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(left: 24.0),
+                  ),
+                  Expanded(
+                    child: Text(
+                      song.title,
+                      style: TextStyle(
+                        color: myColors["text"],
+                        fontSize: 16.0,
                       ),
                     ),
-                    Padding(
-                      padding: EdgeInsets.only(left: 24.0),
-                    ),
-                    Text(
-                      '00 : 00',
-                      style: TextStyle(color: myColors["grey_light"]),
-                    ),
-                  ],
-                ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(left: 24.0),
+                  ),
+                  Text(
+                    '00 : 00',
+                    style: TextStyle(color: myColors["grey_light"]),
+                  ),
+                ],
               ),
             ),
-     ),
-
+          ),
+        ),
         Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: <Widget>[
@@ -143,19 +149,23 @@ class SongsListPage extends StatelessWidget {
         builder: (context) => SafeArea(
           child: CustomScrollView(slivers: <Widget>[
             SliverAppBar(
-              title:
-                  Text(songsListName.toUpperCase(), style: subHeadingTextStyle),
+              title: Text(songsListName, style: subHeadingTextStyle),
               iconTheme: IconThemeData(color: myColors['icon']),
               backgroundColor: myColors["primary"],
               pinned: true,
             ),
-            SliverPadding(padding: EdgeInsets.only(bottom: 24.0),),
+            SliverPadding(
+              padding: EdgeInsets.only(bottom: 24.0),
+            ),
             SliverList(
-              delegate: SliverChildListDelegate( songsList
-                  .map((e) => SongCard(e, (songCounter++).toString().padLeft(2, '0'), context))
+              delegate: SliverChildListDelegate(songsList
+                  .map((e) => SongCard(
+                      e, (songCounter++).toString().padLeft(2, '0'), context))
                   .toList()),
             ),
-            SliverPadding(padding: EdgeInsets.only(bottom: 24.0),)
+            SliverPadding(
+              padding: EdgeInsets.only(bottom: 24.0),
+            )
           ]),
         ),
       ),

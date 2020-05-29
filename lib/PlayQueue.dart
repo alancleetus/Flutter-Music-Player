@@ -7,17 +7,31 @@ class PlayQueue {
   LinkedList<Song> currentPlayQueue = LinkedList<Song>();
   AudioPlayer audioPlayer = new AudioPlayer();
 
+  int currentPosition = -1;
+
   static final PlayQueue _singleton = PlayQueue._internal();
   PlayQueue._internal();
 
   factory PlayQueue() => _singleton;
 
-  clear() => currentPlayQueue.clear();
+  add(Song s) => {if (currentPlayQueue.contains(s)) currentPlayQueue.add(s)};
+  void addFirst(Song s) {
+    if (currentPlayQueue.contains(s)) {
+      currentPlayQueue.remove(s);
+      currentPlayQueue.addFirst(s);
+    } else
+      currentPlayQueue.addFirst(s);
+  }
 
-  add(Song s) => currentPlayQueue.add(s);
-  addFirst(Song s) => currentPlayQueue.addFirst(s);
-  addList(List<Song> s) => currentPlayQueue.addAll(s);
+  void addList(List<Song> s) {
+    currentPlayQueue.clear();
+    currentPlayQueue.addAll(s);
+  }
+
   addNext(Song s) {
+    if (currentPlayQueue.contains(s))
+      currentPlayQueue.remove(s);
+
     if (currentPlayQueue.length > 1)
       currentPlayQueue.first.insertAfter(s);
     else
@@ -26,15 +40,19 @@ class PlayQueue {
 
   Song getCurrSong() => currentPlayQueue.first;
 
-  play() {
-    audioPlayer.play(getCurrSong().url);
+  List<Song> getCurrSongQueue() => currentPlayQueue.toList();
+
+  play() async {
+    await audioPlayer.play(getCurrSong().url);
   }
 
-  pause() {
-    audioPlayer.pause();
+  pause() async {
+    await audioPlayer.pause();
   }
 
-  stop() {
-    currentPlayQueue = null;
+  stop() async {
+    await audioPlayer.stop();
   }
+
+  clear() => currentPlayQueue.clear();
 }

@@ -81,82 +81,166 @@ class _MyHomePageState extends State<MyHomePage> {
       backgroundColor: myColors["primary_dark"],
       body: Builder(
         builder: (context) => SafeArea(
-          child: Container(
-            padding: EdgeInsets.all(24.0),
-            child: CustomScrollView(
-              slivers: <Widget>[
-                SliverList(
-                    delegate: SliverChildListDelegate([
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    textBaseline: TextBaseline.alphabetic,
-                    children: <Widget>[
-                      Icon(Icons.folder_open,
-                          size: 50.0, color: myColors["icon"]),
+          child: Stack(
+            alignment: Alignment.bottomCenter,
+            children: <Widget>[
+              Container(
+                padding: EdgeInsets.only(
+                    top: 24.0, right: 24.0, left: 24.0, bottom: 113.0),
+                child: CustomScrollView(
+                  slivers: <Widget>[
+                    SliverList(
+                        delegate: SliverChildListDelegate([
+                      Row(children: <Widget>[
+                        IconButton(
+                          icon: Icon(
+                            Icons.menu,
+                            color: Colors.white,
+                            size: 28.0,
+                          ),
+                          onPressed: () {},
+                        ),
+                        Spacer(),
+                        IconButton(
+                          icon: Icon(
+                            Icons.search,
+                            color: Colors.white,
+                            size: 28.0,
+                          ),
+                          onPressed: () {},
+                        ),
+                      ]),
                       Padding(
-                        padding: EdgeInsets.only(right: 12.0),
+                        padding: EdgeInsets.only(top: 8.0),
                       ),
-                      Text("Folders", style: headingTextStyle),
-                    ],
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(top: 24.0),
-                  ),
-                ])),
-                SliverList(
-                    delegate: SliverChildListDelegate(folders.keys
-                        .map((folderName) => playListCardWidget(
-                            folderName, folders[folderName], context))
-                        .toList())),
-                SliverList(
-                    delegate: SliverChildListDelegate([
-                  Padding(
-                    padding: EdgeInsets.only(top: 48.0),
-                  ),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    textBaseline: TextBaseline.alphabetic,
-                    children: <Widget>[
-                      Icon(Icons.featured_play_list,
-                          size: 50.0, color: myColors["icon"]),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        textBaseline: TextBaseline.alphabetic,
+                        children: <Widget>[
+                          Icon(Icons.folder_open,
+                              size: 50.0, color: myColors["icon"]),
+                          Padding(
+                            padding: EdgeInsets.only(right: 12.0),
+                          ),
+                          Text("Folders", style: headingTextStyle),
+                        ],
+                      ),
                       Padding(
-                        padding: EdgeInsets.only(right: 12.0),
+                        padding: EdgeInsets.only(top: 24.0),
                       ),
-                      Text("Playlists", style: headingTextStyle),
-                    ],
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(top: 24.0),
-                  ),
-                ])),
-                SliverList(
-                    delegate: SliverChildListDelegate(playlists.keys
-                        .map((playlistName) => playListCardWidget(
-                            playlistName, playlists[playlistName], context))
-                        .toList())),
-                SliverList(
-                    delegate: SliverChildListDelegate([
-                  Padding(
-                    padding: EdgeInsets.only(top: 48.0),
-                  ),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    textBaseline: TextBaseline.alphabetic,
-                    children: <Widget>[
-                      Icon(Icons.album,
-                          size:50.0, color: myColors["icon"]),
+                    ])),
+                    SliverList(
+                        delegate: SliverChildListDelegate(folders.keys
+                            .map((folderName) => playListCardWidget(
+                                folderName, folders[folderName], context))
+                            .toList())),
+                    SliverList(
+                        delegate: SliverChildListDelegate([
                       Padding(
-                        padding: EdgeInsets.only(right: 12.0),
+                        padding: EdgeInsets.only(top: 48.0),
                       ),
-                      Text("Albums", style: headingTextStyle),
-                    ],
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(top: 24.0),
-                  ),
-                ])),
-              ],
-            ),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        textBaseline: TextBaseline.alphabetic,
+                        children: <Widget>[
+                          Icon(Icons.featured_play_list,
+                              size: 50.0, color: myColors["icon"]),
+                          Padding(
+                            padding: EdgeInsets.only(right: 12.0),
+                          ),
+                          Text("Playlists", style: headingTextStyle),
+                          Spacer(),
+                          Icon(Icons.playlist_add,
+                              size: 25.0, color: myColors["accent"]),
+                        ],
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(top: 24.0),
+                      ),
+                    ])),
+                    SliverList(
+                        delegate: SliverChildListDelegate(playlists.keys
+                            .map((playlistName) => playListCardWidget(
+                                playlistName, playlists[playlistName], context))
+                            .toList())),
+                    SliverList(
+                        delegate: SliverChildListDelegate([
+                      Padding(
+                        padding: EdgeInsets.only(top: 48.0),
+                      ),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        textBaseline: TextBaseline.alphabetic,
+                        children: <Widget>[
+                          Icon(Icons.album,
+                              size: 50.0, color: myColors["icon"]),
+                          Padding(
+                            padding: EdgeInsets.only(right: 12.0),
+                          ),
+                          Text("Albums", style: headingTextStyle),
+                        ],
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(top: 24.0),
+                      ),
+                    ])),
+                  ],
+                ),
+              ),
+              Container(
+                height: 90.0,
+                padding: EdgeInsets.all(8.0),
+                color: myColors["primary_light"],
+                child: Column(
+                  //todo: check is song playing
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          IconButton(
+                              icon: Icon(Icons.play_arrow,
+                                  size: 45.0, color: myColors["icon"]),
+                              onPressed: () {}),
+                          Expanded(
+                              child: Column(
+                            children: <Widget>[
+                              Slider(
+                                inactiveColor: myColors["primary"],
+                                activeColor: myColors["accent"],
+                                min: 0,
+                                max: 100,
+                                value: 50,
+                                onChanged: (d) {},
+                              ),
+                              Text(
+                                "Pick a Song",
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 14.0),
+                              ),
+                            ],
+                          )),
+                          IconButton(
+                              icon: Icon(Icons.keyboard_arrow_up,
+                                  size: 45.0, color: myColors["icon"]),
+                              onPressed: () {
+                                print("Clicked show current play list");
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => SongsListPage(
+                                          songsListName: "Current Playlist",
+                                          songsList:
+                                              playQueue.getCurrSongQueue()),
+                                    ));
+                              }),
+                        ]),
+                  ],
+                ),
+              )
+            ],
           ),
         ),
       ),
@@ -172,8 +256,8 @@ GestureDetector playListCardWidget(
       Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => SongsListPage(
-                songsListName: playlistName, songsList: playlist),
+            builder: (context) =>
+                SongsListPage(songsListName: playlistName, songsList: playlist),
           ));
     },
     child: Container(
@@ -191,7 +275,6 @@ GestureDetector playListCardWidget(
               Text(
                 playlistName,
                 style: subHeadingTextStyle,
-
               ),
               Padding(
                 padding: EdgeInsets.only(top: 5.0),
@@ -203,7 +286,7 @@ GestureDetector playListCardWidget(
                   Icon(
                     Icons.music_note,
                     size: 15.0,
-                    color: myColors["grey_light"],
+                    color: myColors["accent"],
                   ),
                   Padding(
                     padding: EdgeInsets.only(left: 5.0),
