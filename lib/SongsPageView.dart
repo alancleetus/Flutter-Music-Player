@@ -4,6 +4,7 @@ import 'package:musicplayer/StylesSheet.dart';
 import 'package:musicplayer/States.dart';
 import 'package:musicplayer/Song.dart';
 import 'package:musicplayer/PlayQueue.dart';
+import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 IsPlaying isPlayingService = IsPlaying();
 CurrentSong currentSongService = CurrentSong();
@@ -44,12 +45,12 @@ class SongsListPage extends StatelessWidget {
                       child: (currentSongSnap.data == song)
                           ? (isPlayingSnap.data)
                               ? Icon(
-                                  Icons.play_arrow,
+                                  Icons.pause,
                                   size: 40.0,
                                   color: myColors["grey_light"],
                                 )
                               : Icon(
-                                  Icons.pause,
+                                  Icons.play_arrow,
                                   size: 40.0,
                                   color: myColors["grey_light"],
                                 )
@@ -70,13 +71,18 @@ class SongsListPage extends StatelessWidget {
                     )),
                     onTap: () {
                       Song s = song;
-                      if (isPlayingSnap.data) {
+                      if (isPlayingSnap.data && currentSongSnap.data == s) {
                         playQueue.pause();
                         isPlayingService.set(false);
                         print("Pausing song: " + s.title);
-                      }
-
-                      if(currentSongSnap.data != s) {
+                      }else if (!isPlayingSnap.data && currentSongSnap.data == s) {
+                        playQueue.play();
+                        isPlayingService.set(true);
+                        print("playing song: " + s.title);
+                      }else if(currentSongSnap.data != s) {
+                        playQueue.pause();
+                        isPlayingService.set(false);
+                        print("Pausing song: " + s.title);
                         playQueue.addFirst(s);
                         playQueue.play();
                         isPlayingService.set(true);
@@ -145,9 +151,75 @@ class SongsListPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        backgroundColor: myColors["primary_dark"],
       body: Builder(
         builder: (context) => SafeArea(
-          child: CustomScrollView(slivers: <Widget>[
+          child: SlidingUpPanel(
+            maxHeight: MediaQuery.of(context).size.height,
+            panel: Container(
+                color: myColors["primary_light"],
+                child: playQueue.CurrentSongView()),
+            collapsed: Container(
+
+              color: myColors["primary_light"],
+              padding: EdgeInsets.only(bottom: 12.0),
+              child: Container(
+                color: myColors["primary_light"],
+                child: Column(
+                  //todo: check is song playing
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          IconButton(
+                              icon: Icon(Icons.play_arrow,
+                                  size: 45.0, color: myColors["icon"]),
+                              onPressed: () {}),
+                          Expanded(
+                              child: Column(
+                                children: <Widget>[
+                                  Text(
+                                    "Pick a Song",
+                                    style: TextStyle(
+                                        color: myColors["text"], fontSize: 14.0),
+                                  ),
+                                  Slider(
+                                    inactiveColor: myColors["primary"],
+                                    activeColor: myColors["accent"],
+                                    min: 0,
+                                    max: 100,
+                                    value: 50,
+                                    onChanged: (d) {},
+                                  ),
+                                ],
+                              )),
+                          IconButton(
+                              icon: Icon(Icons.keyboard_arrow_up,
+                                  size: 45.0, color: myColors["icon"]),
+                              onPressed: () {
+                                print("Clicked show current play list");
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => SongsListPage(
+                                          songsListName: "Current Playlist",
+                                          songsList:
+                                          playQueue.getCurrSongQueue()),
+                                    ));
+                              }),
+                        ]),
+                  ],
+                ),
+              ),
+            ),
+            body: Center(
+              child: Container(
+                padding: EdgeInsets.only(
+                    top: 24.0, right: 24.0, left: 24.0, bottom: 150.0),
+                child: CustomScrollView(slivers: <Widget>[
             SliverAppBar(
               title: Text(songsListName, style: subHeadingTextStyle),
               iconTheme: IconThemeData(color: myColors['icon']),
@@ -167,9 +239,10 @@ class SongsListPage extends StatelessWidget {
               padding: EdgeInsets.only(bottom: 24.0),
             )
           ]),
+              ),
+            )
         ),
       ),
-      backgroundColor: myColors["primary_dark"],
-    );
+    ));
   }
 }

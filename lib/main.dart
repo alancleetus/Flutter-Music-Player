@@ -11,6 +11,7 @@ import 'package:musicplayer/PlayQueue.dart';
 import 'package:musicplayer/StylesSheet.dart';
 import 'package:musicplayer/SongsPageView.dart';
 import 'package:musicplayer/States.dart';
+import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 IsPlaying isPlayingService = IsPlaying();
 CurrentSong currentSongService = CurrentSong();
@@ -58,6 +59,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
+
     setState(() {
       print("Initializing State");
       List<FileSystemEntity> allMusicDirs = getAllMusicDirs();
@@ -81,12 +83,70 @@ class _MyHomePageState extends State<MyHomePage> {
       backgroundColor: myColors["primary_dark"],
       body: Builder(
         builder: (context) => SafeArea(
-          child: Stack(
-            alignment: Alignment.bottomCenter,
-            children: <Widget>[
-              Container(
+          child: SlidingUpPanel(
+            maxHeight: MediaQuery.of(context).size.height,
+            panel: Container(
+                color: myColors["primary_light"],
+                child: playQueue.CurrentSongView()),
+            collapsed: Container(
+              color: myColors["primary_light"],
+              padding: EdgeInsets.only(bottom: 12.0),
+              child: Container(
+                color: myColors["primary_light"],
+                child: Column(
+                  //todo: check is song playing
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          IconButton(
+                              icon: Icon(Icons.play_arrow,
+                                  size: 45.0, color: myColors["icon"]),
+                              onPressed: () {}),
+                          Expanded(
+                              child: Column(
+                            children: <Widget>[
+                              Text(
+                                "Pick a Song",
+                                style: TextStyle(
+                                    color: myColors["text"], fontSize: 14.0),
+                              ),
+                              Slider(
+                                inactiveColor: myColors["primary"],
+                                activeColor: myColors["accent"],
+                                min: 0,
+                                max: 100,
+                                value: 50,
+                                onChanged: (d) {},
+                              ),
+                            ],
+                          )),
+                          IconButton(
+                              icon: Icon(Icons.keyboard_arrow_up,
+                                  size: 45.0, color: myColors["icon"]),
+                              onPressed: () {
+                                print("Clicked show current play list");
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => SongsListPage(
+                                          songsListName: "Current Playlist",
+                                          songsList:
+                                              playQueue.getCurrSongQueue()),
+                                    ));
+                              }),
+                        ]),
+                  ],
+                ),
+              ),
+            ),
+            body: Center(
+              child: Container(
                 padding: EdgeInsets.only(
-                    top: 24.0, right: 24.0, left: 24.0, bottom: 113.0),
+                    top: 24.0, right: 24.0, left: 24.0, bottom: 150.0),
                 child: CustomScrollView(
                   slivers: <Widget>[
                     SliverList(
@@ -187,7 +247,14 @@ class _MyHomePageState extends State<MyHomePage> {
                   ],
                 ),
               ),
-              Container(
+            ),
+          ),
+
+          /*Stack(
+            alignment: Alignment.bottomCenter,
+            children: <Widget>[
+              ,
+              /*Container(
                 height: 90.0,
                 padding: EdgeInsets.all(8.0),
                 color: myColors["primary_light"],
@@ -239,9 +306,9 @@ class _MyHomePageState extends State<MyHomePage> {
                         ]),
                   ],
                 ),
-              )
+              )*/
             ],
-          ),
+          ),*/
         ),
       ),
     );
