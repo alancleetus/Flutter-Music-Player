@@ -55,8 +55,8 @@ class SongsListPage extends StatelessWidget {
                                   size: 40.0,
                                   color: myColors["grey_light"],
                                 )
-                          : Text(""+
-                              songCount.toString(),
+                          : Text(
+                              "" + songCount.toString(),
                               style: TextStyle(
                                 color: myColors["grey_light"],
                               ),
@@ -76,11 +76,12 @@ class SongsListPage extends StatelessWidget {
                         playQueue.pause();
                         isPlayingService.set(false);
                         print("Pausing song: " + s.title);
-                      }else if (!isPlayingSnap.data && currentSongSnap.data == s) {
+                      } else if (!isPlayingSnap.data &&
+                          currentSongSnap.data == s) {
                         playQueue.play();
                         isPlayingService.set(true);
                         print("playing song: " + s.title);
-                      }else if(currentSongSnap.data != s) {
+                      } else if (currentSongSnap.data != s) {
                         playQueue.pause();
                         isPlayingService.set(false);
                         print("Pausing song: " + s.title);
@@ -96,8 +97,8 @@ class SongsListPage extends StatelessWidget {
                     padding: EdgeInsets.only(left: 24.0),
                   ),
                   Expanded(
-                    child: Text(""+
-                      song.title.toString(),
+                    child: Text(
+                      "" + song.title.toString(),
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         color: myColors["text"],
@@ -109,8 +110,17 @@ class SongsListPage extends StatelessWidget {
                     padding: EdgeInsets.only(left: 24.0),
                   ),
                   Text(
-                  (song.duration.inHours<1)?song.duration.inMinutes.toString().padLeft(2, '0') +" : "+(song.duration.inSeconds%60).toString().padLeft(2, '0'):
-                    song.duration.toString().split('.').first.padLeft(8, '0'),
+                    (song.duration.inHours < 1)
+                        ? song.duration.inMinutes.toString().padLeft(2, '0') +
+                            " : " +
+                            (song.duration.inSeconds % 60)
+                                .toString()
+                                .padLeft(2, '0')
+                        : song.duration
+                            .toString()
+                            .split('.')
+                            .first
+                            .padLeft(8, '0'),
                     //song.duration.inMinutes.toString() +" mins",
                     style: TextStyle(color: myColors["grey_light"]),
                   ),
@@ -156,41 +166,47 @@ class SongsListPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: myColors["primary_dark"],
-      body: Builder(
-        builder: (context) => SafeArea(
-          child: SlidingUpPanel(
-            maxHeight: MediaQuery.of(context).size.height,
-            panel: Container(
-                color: myColors["primary_light"],
-                child: playQueue.CurrentSongView()),
-            collapsed: Container(
-
-              color: myColors["primary_light"],
-              padding: EdgeInsets.only(bottom: 12.0),
-              child: Container(
-                color: myColors["primary_light"],
-                child: Column(
-                  //todo: check is song playing
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          IconButton(
-                              icon: Icon(
-                                //todo fix this
-                                  (playQueue.audioPlayer.state == AudioPlayerState.PLAYING)?Icons.pause:Icons.play_arrow,
-                                  size: 45.0, color: myColors["accent"]),
-                              onPressed: () {playQueue.resume();}),
-                          Expanded(
-                              child: Column(
+        body: Builder(
+          builder: (context) => SafeArea(
+            child: SlidingUpPanel(
+                maxHeight: MediaQuery.of(context).size.height,
+                panel: Container(
+                    color: myColors["primary_light"],
+                    child: playQueue.CurrentSongView()),
+                collapsed: Container(
+                  color: myColors["primary_light"],
+                  padding: EdgeInsets.only(bottom: 12.0),
+                  child: Container(
+                    color: myColors["primary_light"],
+                    child: Column(
+                      //todo: check is song playing
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget>[
+                        Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              IconButton(
+                                  icon: Icon(
+                                      //todo fix this
+                                      (playQueue.audioPlayer.state ==
+                                              AudioPlayerState.PLAYING)
+                                          ? Icons.pause
+                                          : Icons.play_arrow,
+                                      size: 45.0,
+                                      color: myColors["accent"]),
+                                  onPressed: () {
+                                    playQueue.resume();
+                                  }),
+                              Expanded(
+                                  child: Column(
                                 children: <Widget>[
                                   Text(
                                     "Pick a Song",
                                     style: TextStyle(
-                                        color: myColors["text"], fontSize: 14.0),
+                                        color: myColors["text"],
+                                        fontSize: 14.0),
                                   ),
                                   Slider(
                                     inactiveColor: myColors["primary"],
@@ -202,53 +218,53 @@ class SongsListPage extends StatelessWidget {
                                   ),
                                 ],
                               )),
-                          IconButton(
-                              icon: Icon(Icons.keyboard_arrow_up,
-                                  size: 45.0, color: myColors["icon"]),
-                              onPressed: () {
-                                print("Clicked show current play list");
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => SongsListPage(
-                                          songsListName: "Current Playlist",
-                                          songsList:
-                                          playQueue.getCurrSongQueue()),
-                                    ));
-                              }),
-                        ]),
-                  ],
+                              IconButton(
+                                  icon: Icon(Icons.keyboard_arrow_up,
+                                      size: 45.0, color: myColors["icon"]),
+                                  onPressed: () {
+                                    print("Clicked show current play list");
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => SongsListPage(
+                                              songsListName: "Current Playlist",
+                                              songsList:
+                                                  playQueue.getCurrSongQueue()),
+                                        ));
+                                  }),
+                            ]),
+                      ],
+                    ),
+                  ),
                 ),
-              ),
-            ),
-            body: Center(
-              child: Container(
-                padding: EdgeInsets.only(
-                    bottom: 130.0),
-                child: CustomScrollView(slivers: <Widget>[
-            SliverAppBar(
-              title: Text(songsListName, style: subHeadingTextStyle),
-              iconTheme: IconThemeData(color: myColors['icon']),
-              backgroundColor: myColors["primary"],
-              pinned: true,
-            ),
-            SliverPadding(
-              padding: EdgeInsets.only(bottom: 24.0),
-            ),
-            SliverList(
-              delegate: SliverChildListDelegate(songsList
-                  .map((e) => SongCard(
-                      e, (songCounter++).toString().padLeft(2, '0'), context))
-                  .toList()),
-            ),
-            SliverPadding(
-              padding: EdgeInsets.only(bottom: 24.0),
-            )
-          ]),
-              ),
-            )
-        ),
-      ),
-    ));
+                body: Center(
+                  child: Container(
+                    padding: EdgeInsets.only(bottom: 130.0),
+                    child: CustomScrollView(slivers: <Widget>[
+                      SliverAppBar(
+                        title: Text(songsListName, style: subHeadingTextStyle),
+                        iconTheme: IconThemeData(color: myColors['icon']),
+                        backgroundColor: myColors["primary"],
+                        pinned: true,
+                      ),
+                      SliverPadding(
+                        padding: EdgeInsets.only(bottom: 24.0),
+                      ),
+                      SliverList(
+                        delegate: SliverChildListDelegate(songsList
+                            .map((e) => SongCard(
+                                e,
+                                (songCounter++).toString().padLeft(2, '0'),
+                                context))
+                            .toList()),
+                      ),
+                      SliverPadding(
+                        padding: EdgeInsets.only(bottom: 24.0),
+                      )
+                    ]),
+                  ),
+                )),
+          ),
+        ));
   }
 }

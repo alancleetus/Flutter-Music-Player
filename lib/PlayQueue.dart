@@ -6,16 +6,15 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:musicplayer/Song.dart';
 import 'package:musicplayer/StylesSheet.dart';
+import 'package:flutter_plugin_playlist/flutter_plugin_playlist.dart';
 
-import 'package:mp3_info/mp3_info.dart';
-import 'package:audiotagger/audiotagger.dart';
 
 /*This is the current list of songs being played*/
 class PlayQueue {
+  RmxAudioPlayer rmxAudioPlayer = new RmxAudioPlayer();
+
   LinkedList<Song> currentPlayQueue = LinkedList<Song>();
   AudioPlayer audioPlayer = new AudioPlayer();
-
-  int currentPosition = -1;
 
   static final PlayQueue _singleton = PlayQueue._internal();
   PlayQueue._internal();

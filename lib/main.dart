@@ -46,39 +46,34 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  @override
-  _MyHomePageState createState() => _MyHomePageState();
-}
 
-class _MyHomePageState extends State<MyHomePage> {
+class MyHomePage extends StatelessWidget {
+
   LinkedHashMap folders = LinkedHashMap<String, List<Song>>();
   LinkedHashMap playlists = LinkedHashMap<String, List<Song>>();
   LinkedHashMap albums = LinkedHashMap<String, List<Song>>();
 
-  @override
-  void initState() {
-    super.initState();
+  void getFolders(){
 
-    setState(() {
-      print("Initializing State");
-      List<FileSystemEntity> allMusicDirs = getAllMusicDirs();
-      //print("allMusicDirs: "+ allMusicDirs.toList().toString());
-      folders["All Songs"] =
-          getAllSongsInDirectory("/storage/emulated/0/Music/");
-      for (FileSystemEntity fse in allMusicDirs) {
-        String folderName = fse.path.split('/').last.toString();
-        //print("Getting songs in /Music/"+folderName);
-        List<Song> songsList = getAllSongsInDirectory(fse.path);
-        if (songsList.length > 0) folders[folderName] = songsList;
-      }
-      ;
-      print("playlists.keys: " + folders.keys.toList().toString());
-    });
+    List<FileSystemEntity> allMusicDirs = getAllMusicDirs();
+    //print("allMusicDirs: "+ allMusicDirs.toList().toString());
+    folders["All Songs"] =
+        getAllSongsInDirectory("/storage/emulated/0/Music/");
+    for (FileSystemEntity fse in allMusicDirs) {
+      String folderName = fse.path.split('/').last.toString();
+      //print("Getting songs in /Music/"+folderName);
+      List<Song> songsList = getAllSongsInDirectory(fse.path);
+      if (songsList.length > 0) folders[folderName] = songsList;
+    }
+
+    print("Log: main.dart() - playlists.keys: " + folders.keys.toList().toString());
   }
 
   @override
   Widget build(BuildContext context) {
+
+    getFolders();
+
     return Scaffold(
       backgroundColor: myColors["primary_dark"],
       body: Builder(
@@ -128,7 +123,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               icon: Icon(Icons.keyboard_arrow_up,
                                   size: 45.0, color: myColors["icon"]),
                               onPressed: () {
-                                print("Clicked show current play list");
+                                print("Log: main.dart() - Clicked show current play list");
                                 Navigator.push(
                                     context,
                                     MaterialPageRoute(
@@ -249,66 +244,6 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ),
           ),
-
-          /*Stack(
-            alignment: Alignment.bottomCenter,
-            children: <Widget>[
-              ,
-              /*Container(
-                height: 90.0,
-                padding: EdgeInsets.all(8.0),
-                color: myColors["primary_light"],
-                child: Column(
-                  //todo: check is song playing
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          IconButton(
-                              icon: Icon(Icons.play_arrow,
-                                  size: 45.0, color: myColors["icon"]),
-                              onPressed: () {}),
-                          Expanded(
-                              child: Column(
-                            children: <Widget>[
-                              Slider(
-                                inactiveColor: myColors["primary"],
-                                activeColor: myColors["accent"],
-                                min: 0,
-                                max: 100,
-                                value: 50,
-                                onChanged: (d) {},
-                              ),
-                              Text(
-                                "Pick a Song",
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 14.0),
-                              ),
-                            ],
-                          )),
-                          IconButton(
-                              icon: Icon(Icons.keyboard_arrow_up,
-                                  size: 45.0, color: myColors["icon"]),
-                              onPressed: () {
-                                print("Clicked show current play list");
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => SongsListPage(
-                                          songsListName: "Current Playlist",
-                                          songsList:
-                                              playQueue.getCurrSongQueue()),
-                                    ));
-                              }),
-                        ]),
-                  ],
-                ),
-              )*/
-            ],
-          ),*/
         ),
       ),
     );
@@ -319,7 +254,7 @@ GestureDetector playListCardWidget(
     String playlistName, List<Song> playlist, var context) {
   return GestureDetector(
     onTap: () {
-      print("Pressed " + playlistName.toString());
+      print("Log: main.dart() - Pressed " + playlistName.toString());
       Navigator.push(
           context,
           MaterialPageRoute(
@@ -389,7 +324,7 @@ GestureDetector playListCardWidget(
               color: myColors["icon"],
               icon: Icon(Icons.shuffle, size: 30.0),
               onPressed: () {
-                print("Shuffling " +
+                print("Log: main.dart() - Shuffling " +
                     playlistName.toString().toUpperCase() +
                     " folder");
                 final scaff = Scaffold.of(context);
@@ -414,7 +349,7 @@ GestureDetector playListCardWidget(
               color: myColors["icon"],
               icon: Icon(Icons.playlist_play, size: 40.0),
               onPressed: () {
-                print("Playing " +
+                print("Log: main.dart() - Playing " +
                     playlistName.toString().toUpperCase() +
                     " folder");
 
