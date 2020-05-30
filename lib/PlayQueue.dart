@@ -1,9 +1,14 @@
 import 'dart:collection';
+import 'dart:convert';
+import 'dart:io';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:musicplayer/Song.dart';
 import 'package:musicplayer/StylesSheet.dart';
+
+import 'package:mp3_info/mp3_info.dart';
+import 'package:audiotagger/audiotagger.dart';
 
 /*This is the current list of songs being played*/
 class PlayQueue {
@@ -46,10 +51,12 @@ class PlayQueue {
 
   play() async {
     await audioPlayer.play(getCurrSong().url);
+    print("Log: playing song = "+getCurrSong().toString());
   }
 
   pause() async {
     await audioPlayer.pause();
+    print("Log: pausing song = "+getCurrSong().toString());
   }
 
   stop() async {
@@ -60,7 +67,7 @@ class PlayQueue {
 
   Widget CurrentSongView() {
     print(
-        "Slideup lenght of curr queue: " + currentPlayQueue.length.toString());
+        "Slideup length of curr queue: " + currentPlayQueue.length.toString());
     if (currentPlayQueue.length < 1)
       return Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -118,8 +125,11 @@ class PlayQueue {
                             size: 100.0, color: myColors["icon"])
                         : Icon(Icons.play_arrow,
                             size: 100.0, color: myColors["icon"]),
-                    onPressed: () {(audioPlayer.state == AudioPlayerState.PLAYING)?
-                    audioPlayer.pause(): audioPlayer.resume();}),
+                    onPressed: () {
+                      (audioPlayer.state == AudioPlayerState.PLAYING)
+                          ? audioPlayer.pause()
+                          : audioPlayer.resume();
+                    }),
                 IconButton(
                     icon: Icon(Icons.skip_next,
                         size: 48.0, color: myColors["icon"]),

@@ -146,7 +146,7 @@ class _MyHomePageState extends State<MyHomePage> {
             body: Center(
               child: Container(
                 padding: EdgeInsets.only(
-                    top: 24.0, right: 24.0, left: 24.0, bottom: 150.0),
+                    top: 24.0, right: 24.0, left: 24.0, bottom: 130.0),
                 child: CustomScrollView(
                   slivers: <Widget>[
                     SliverList(
@@ -243,7 +243,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       Padding(
                         padding: EdgeInsets.only(top: 24.0),
                       ),
-                    ])),
+                      ])),
                   ],
                 ),
               ),

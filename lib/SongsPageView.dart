@@ -54,8 +54,8 @@ class SongsListPage extends StatelessWidget {
                                   size: 40.0,
                                   color: myColors["grey_light"],
                                 )
-                          : Text(
-                              songCount,
+                          : Text(""+
+                              songCount.toString(),
                               style: TextStyle(
                                 color: myColors["grey_light"],
                               ),
@@ -95,8 +95,8 @@ class SongsListPage extends StatelessWidget {
                     padding: EdgeInsets.only(left: 24.0),
                   ),
                   Expanded(
-                    child: Text(
-                      song.title,
+                    child: Text(""+
+                      song.title.toString(),
                       style: TextStyle(
                         color: myColors["text"],
                         fontSize: 16.0,
@@ -218,7 +218,7 @@ class SongsListPage extends StatelessWidget {
             body: Center(
               child: Container(
                 padding: EdgeInsets.only(
-                    top: 24.0, right: 24.0, left: 24.0, bottom: 150.0),
+                    bottom: 130.0),
                 child: CustomScrollView(slivers: <Widget>[
             SliverAppBar(
               title: Text(songsListName, style: subHeadingTextStyle),
