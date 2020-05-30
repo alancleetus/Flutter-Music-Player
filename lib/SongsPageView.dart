@@ -97,6 +97,7 @@ class SongsListPage extends StatelessWidget {
                   Expanded(
                     child: Text(""+
                       song.title.toString(),
+                      overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         color: myColors["text"],
                         fontSize: 16.0,
@@ -107,7 +108,9 @@ class SongsListPage extends StatelessWidget {
                     padding: EdgeInsets.only(left: 24.0),
                   ),
                   Text(
-                    '00 : 00',
+                  (song.duration.inHours<1)?song.duration.inMinutes.toString().padLeft(2, '0') +" : "+(song.duration.inSeconds%60).toString().padLeft(2, '0'):
+                    song.duration.toString().split('.').first.padLeft(8, '0'),
+                    //song.duration.inMinutes.toString() +" mins",
                     style: TextStyle(color: myColors["grey_light"]),
                   ),
                 ],
