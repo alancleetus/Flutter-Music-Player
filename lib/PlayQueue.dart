@@ -63,6 +63,11 @@ class PlayQueue {
     await audioPlayer.stop();
   }
 
+  resume() async {
+    if(getCurrSongQueue()!= null)
+      await audioPlayer.resume();
+  }
+
   clear() => currentPlayQueue.clear();
 
   Widget CurrentSongView() {

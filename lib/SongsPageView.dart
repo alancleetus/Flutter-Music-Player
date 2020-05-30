@@ -1,3 +1,4 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:musicplayer/StylesSheet.dart';
@@ -178,9 +179,11 @@ class SongsListPage extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           IconButton(
-                              icon: Icon(Icons.play_arrow,
-                                  size: 45.0, color: myColors["icon"]),
-                              onPressed: () {}),
+                              icon: Icon(
+                                //todo fix this
+                                  (playQueue.audioPlayer.state == AudioPlayerState.PLAYING)?Icons.pause:Icons.play_arrow,
+                                  size: 45.0, color: myColors["accent"]),
+                              onPressed: () {playQueue.resume();}),
                           Expanded(
                               child: Column(
                                 children: <Widget>[
